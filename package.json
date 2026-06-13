@@ -1,0 +1,26 @@
+{
+  "name": "vuna-calc",
+  "version": "1.0.0",
+  "description": "VUNA Calculator",
+  "private": true,
+  "scripts": {
+    "lint": "eslint assets/js/",
+    "lint:fix": "eslint assets/js/ --fix",
+    "format": "prettier --write \"assets/js/**/*.js\" \"assets/css/**/*.css\" \"*.html\"",
+    "format:check": "prettier --check \"assets/js/**/*.js\" \"assets/css/**/*.css\" \"*.html\"",
+    "dev": "live-server --port=3000",
+    "dev:open": "live-server --port=3000 --open",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "build": "echo 'No build step required for vanilla JS'"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "live-server": "^1.2.2",
+    "prettier": "^3.0.0"
+  }
+}

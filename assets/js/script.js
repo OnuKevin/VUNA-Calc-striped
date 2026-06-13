@@ -44,15 +44,6 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 // ------------------------------
-// Calculator State
-// ------------------------------
-let left = "";
-let operator = "";
-let right = "";
-let steps = [];
-const MAX_STEPS = 6;
-
-// ------------------------------
 // Basic Calculator Functions
 // ------------------------------
 function appendToResult(value) {
@@ -83,7 +74,6 @@ function clearResult() {
   currentExpression = "";
   updateResult();
 }
-
 
 function normalizeExpression(expr) {
   return expr
@@ -119,7 +109,7 @@ function percentToResult() {
 
     try {
       leftVal = eval(leftPart);
-    } catch (e) {
+    } catch {
       leftVal = parseFloat(leftPart);
     }
 
@@ -142,46 +132,69 @@ function percentToResult() {
 // ------------------------------
 function calculateExpression(expression) {
   try {
-   
     let normalizedExpression = normalizeExpression(expression);
 
     // 🧠 Replace "ans" with last result automatically
-    normalizedExpression = normalizedExpression.replace(
-      /\bans\b/gi,
-      LAST_RESULT,
-    );
+    normalizedExpression = normalizedExpression.replace(/\bans\b/gi, LAST_RESULT);
 
     // Calculate result
     let result = eval(normalizedExpression);
     console.log("Calculated result for expression:", expression, "->", result);
- 
+
     if (isNaN(result) || !isFinite(result)) {
       throw new Error();
     }
 
     return result;
-  } catch (e) {
+  } catch {
     return "Error";
   }
 }
 function calculateResult() {
   if (!currentExpression) return;
-    const display = document.getElementById("result"); 
-    // Calculate result
-    let result = calculateExpression(currentExpression);
-    result = String(result);
+  const display = document.getElementById("result");
+  // Calculate result
+  let result = calculateExpression(currentExpression);
+  result = String(result);
 
-    // Save result for future expressions
-    LAST_RESULT = result;
+  // Save result for future expressions
+  LAST_RESULT = result;
 
-    // Display normally
-    display.value = result;
+  // Display normally
+  display.value = result;
 
-    currentExpression = result;
-    updateResult();
+  currentExpression = result;
+  updateResult();
 }
-
 
 function updateResult() {
   document.getElementById("result").value = currentExpression || "0";
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    normalizeExpression,
+    calculateExpression,
+    appendToResult,
+    bracketToResult,
+    backspace,
+    operatorToResult,
+    clearResult,
+    percentToResult,
+    calculateResult,
+    toggleTheme,
+    updateResult,
+    get currentExpression() {
+      return currentExpression;
+    },
+    set currentExpression(val) {
+      currentExpression = val;
+    },
+    get LAST_RESULT() {
+      return LAST_RESULT;
+    },
+    set LAST_RESULT(val) {
+      LAST_RESULT = val;
+    },
+  };
 }

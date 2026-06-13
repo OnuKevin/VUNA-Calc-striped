@@ -1,0 +1,8 @@
+node_modules
+.git
+test
+.prettierrc
+eslint.config.mjs
+jest.config.js
+package-lock.json
+package.json
