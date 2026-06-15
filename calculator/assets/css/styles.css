@@ -843,3 +843,69 @@ body:hover #scroll-to-calculator {
   margin-top: 6px;
   display: none;
 }
+
+/* ── Brain Score Card ── */
+.brain-score-card {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  border: 1px solid rgba(13, 110, 253, 0.15);
+}
+
+body.dark-mode .brain-score-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.brain-level {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #6f42c1;
+  margin-bottom: 4px;
+}
+
+body.dark-mode .brain-level {
+  color: #a855f7;
+}
+
+.brain-score-val {
+  font-size: 0.9rem;
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+body.dark-mode .brain-score-val {
+  color: #bbb;
+}
+
+.brain-progress {
+  height: 8px;
+  background: #dee2e6;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+body.dark-mode .brain-progress {
+  background: #333;
+}
+
+.brain-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6f42c1, #a855f7);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.brain-calc-count {
+  font-size: 0.75rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.dark-mode .brain-calc-count {
+  color: #888;
+}
