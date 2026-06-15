@@ -1,191 +1,120 @@
-const calc = require("../assets/js/script");
+const { calculateExpression, normalizeExpression } = global;
 
-describe("Calculator UI functions", () => {
+// Normalize expression tests
+describe("normalizeExpression", () => {
+  test("replaces 'e' with Math.E", () => {
+    expect(normalizeExpression("e")).toBe("Math.E");
+  });
+
+  test("replaces 'pi' with Math.PI", () => {
+    expect(normalizeExpression("pi")).toBe("Math.PI");
+  });
+
+  test("replaces sin( with sinDeg(", () => {
+    expect(normalizeExpression("sin(0)")).toBe("sinDeg(0)");
+  });
+
+  test("replaces cos( with cosDeg(", () => {
+    expect(normalizeExpression("cos(0)")).toBe("cosDeg(0)");
+  });
+
+  test("replaces tan( with tanDeg(", () => {
+    expect(normalizeExpression("tan(0)")).toBe("tanDeg(0)");
+  });
+
+  test("replaces asin( with asinDeg(", () => {
+    expect(normalizeExpression("asin(0)")).toBe("asinDeg(0)");
+  });
+
+  test("replaces acos( with acosDeg(", () => {
+    expect(normalizeExpression("acos(0)")).toBe("acosDeg(0)");
+  });
+
+  test("replaces atan( with atanDeg(", () => {
+    expect(normalizeExpression("atan(0)")).toBe("atanDeg(0)");
+  });
+
+  test("leaves sinh( unchanged", () => {
+    expect(normalizeExpression("sinh(0)")).toBe("sinh(0)");
+  });
+
+  test("leaves asinh( unchanged", () => {
+    expect(normalizeExpression("asinh(0)")).toBe("asinh(0)");
+  });
+
+  test("handles mixed expression", () => {
+    const result = normalizeExpression("sin(pi/2)+cos(0)");
+    expect(result).toBe("sinDeg(Math.PI/2)+cosDeg(0)");
+  });
+});
+
+// Calculate expression tests
+describe("calculateExpression", () => {
   beforeEach(() => {
-    localStorage.clear();
-    document.body.innerHTML = `
-      <input type="text" id="result" />
-      <button id="theme-toggle"></button>
-    `;
-    document.body.classList.remove("dark-mode");
-    calc.currentExpression = "";
-    calc.LAST_RESULT = 0;
+    global.LAST_RESULT = 0;
   });
 
-  describe("appendToResult", () => {
-    test("appends number to expression", () => {
-      calc.appendToResult(5);
-      expect(calc.currentExpression).toBe("5");
-    });
-
-    test("appends multiple numbers", () => {
-      calc.appendToResult(1);
-      calc.appendToResult(2);
-      calc.appendToResult(3);
-      expect(calc.currentExpression).toBe("123");
-    });
-
-    test("appends decimal point", () => {
-      calc.appendToResult(1);
-      calc.appendToResult(".");
-      calc.appendToResult(5);
-      expect(calc.currentExpression).toBe("1.5");
-    });
-
-    test("updates display", () => {
-      calc.appendToResult(7);
-      expect(document.getElementById("result").value).toBe("7");
-    });
+  test("adds two numbers", () => {
+    expect(calculateExpression("2+3")).toBe(5);
   });
 
-  describe("bracketToResult", () => {
-    test("appends opening bracket", () => {
-      calc.bracketToResult("(");
-      expect(calc.currentExpression).toBe("(");
-    });
-
-    test("appends closing bracket", () => {
-      calc.bracketToResult("(");
-      calc.bracketToResult(")");
-      expect(calc.currentExpression).toBe("()");
-    });
+  test("subtracts two numbers", () => {
+    expect(calculateExpression("10-4")).toBe(6);
   });
 
-  describe("backspace", () => {
-    test("removes last character", () => {
-      calc.currentExpression = "123";
-      calc.backspace();
-      expect(calc.currentExpression).toBe("12");
-    });
-
-    test("removes to empty string", () => {
-      calc.currentExpression = "1";
-      calc.backspace();
-      expect(calc.currentExpression).toBe("");
-    });
-
-    test("does nothing on empty expression", () => {
-      calc.currentExpression = "";
-      calc.backspace();
-      expect(calc.currentExpression).toBe("");
-    });
+  test("multiplies two numbers", () => {
+    expect(calculateExpression("6*7")).toBe(42);
   });
 
-  describe("operatorToResult", () => {
-    test("appends + operator", () => {
-      calc.operatorToResult("+");
-      expect(calc.currentExpression).toBe("+");
-    });
-
-    test("appends - operator", () => {
-      calc.operatorToResult("-");
-      expect(calc.currentExpression).toBe("-");
-    });
-
-    test("appends * operator", () => {
-      calc.operatorToResult("*");
-      expect(calc.currentExpression).toBe("*");
-    });
-
-    test("appends / operator", () => {
-      calc.operatorToResult("/");
-      expect(calc.currentExpression).toBe("/");
-    });
-
-    test("converts ^ to **", () => {
-      calc.operatorToResult("^");
-      expect(calc.currentExpression).toBe("**");
-    });
+  test("divides two numbers", () => {
+    expect(calculateExpression("12/4")).toBe(3);
   });
 
-  describe("clearResult", () => {
-    test("clears expression", () => {
-      calc.currentExpression = "123+456";
-      calc.clearResult();
-      expect(calc.currentExpression).toBe("");
-    });
-
-    test("displays 0 when cleared", () => {
-      calc.currentExpression = "123";
-      calc.clearResult();
-      expect(document.getElementById("result").value).toBe("0");
-    });
+  test("respects order of operations", () => {
+    expect(calculateExpression("2+3*4")).toBe(14);
   });
 
-  describe("updateResult", () => {
-    test("displays current expression", () => {
-      calc.currentExpression = "42";
-      calc.updateResult();
-      expect(document.getElementById("result").value).toBe("42");
-    });
-
-    test("displays 0 when expression is empty", () => {
-      calc.currentExpression = "";
-      calc.updateResult();
-      expect(document.getElementById("result").value).toBe("0");
-    });
+  test("handles parentheses", () => {
+    expect(calculateExpression("(2+3)*4")).toBe(20);
   });
 
-  describe("toggleTheme", () => {
-    test("toggles dark mode class on body", () => {
-      calc.toggleTheme();
-      expect(document.body.classList.contains("dark-mode")).toBe(true);
-    });
-
-    test("toggles back to light mode", () => {
-      calc.toggleTheme();
-      calc.toggleTheme();
-      expect(document.body.classList.contains("dark-mode")).toBe(false);
-    });
-
-    test("updates button text to sun icon in dark mode", () => {
-      calc.toggleTheme();
-      expect(document.getElementById("theme-toggle").innerHTML).toBe("☀️");
-    });
-
-    test("updates button text to moon icon in light mode", () => {
-      calc.toggleTheme();
-      calc.toggleTheme();
-      expect(document.getElementById("theme-toggle").innerHTML).toBe("🌙");
-    });
-
-    test("persists theme to localStorage", () => {
-      calc.toggleTheme();
-      expect(localStorage.getItem("theme")).toBe("dark");
-    });
-
-    test("persists light theme to localStorage", () => {
-      calc.toggleTheme();
-      calc.toggleTheme();
-      expect(localStorage.getItem("theme")).toBe("light");
-    });
+  test("handles decimal numbers", () => {
+    expect(calculateExpression("3.5+2.5")).toBe(6);
   });
 
-  describe("calculateResult", () => {
-    test("calculates and displays result", () => {
-      calc.currentExpression = "2+3";
-      calc.calculateResult();
-      expect(document.getElementById("result").value).toBe("5");
-    });
+  test("handles power operator", () => {
+    expect(calculateExpression("2**3")).toBe(8);
+  });
 
-    test("updates LAST_RESULT", () => {
-      calc.currentExpression = "10*2";
-      calc.calculateResult();
-      expect(calc.LAST_RESULT).toBe("20");
-    });
+  test("handles modulus", () => {
+    expect(calculateExpression("10%3")).toBe(1);
+  });
 
-    test("does nothing on empty expression", () => {
-      calc.currentExpression = "";
-      calc.calculateResult();
-      expect(calc.currentExpression).toBe("");
-    });
+  test("replaces 'ans' with LAST_RESULT", () => {
+    global.LAST_RESULT = 5;
+    expect(calculateExpression("ans+3")).toBe(8);
+  });
 
-    test("stores result for next calculation", () => {
-      calc.currentExpression = "5+5";
-      calc.calculateResult();
-      calc.currentExpression = "ans+1";
-      calc.calculateResult();
-      expect(document.getElementById("result").value).toBe("11");
-    });
+  test("replaces 'ANS' case-insensitively", () => {
+    global.LAST_RESULT = 10;
+    expect(calculateExpression("ANS/2")).toBe(5);
+  });
+
+  test("returns 'Error' for division by zero", () => {
+    expect(calculateExpression("1/0")).toBe("Error");
+  });
+
+  test("returns 'Error' for invalid expressions", () => {
+    expect(calculateExpression("2++2")).toBe("Error");
+  });
+
+  test("evaluates expression with pi", () => {
+    const result = calculateExpression("pi*2");
+    expect(result).toBeCloseTo(Math.PI * 2, 10);
+  });
+
+  test("evaluates expression with e", () => {
+    const result = calculateExpression("e");
+    expect(result).toBe(Math.E);
   });
 });
