@@ -251,3 +251,213 @@ function calculateResult() {
 function updateResult() {
   document.getElementById("result").value = currentExpression || "0";
 }
+
+// ===============================
+// Matrix Panel Toggle
+// ===============================
+
+function toggleMatrixPanel() {
+  const panel = document.getElementById("matrix-panel");
+  if (panel) {
+    const shown = panel.style.display !== "none";
+    panel.style.display = shown ? "none" : "block";
+    if (!shown) {
+      renderMatrixA();
+      renderMatrixB();
+    }
+  }
+}
+
+// ===============================
+// Matrix Operations
+// ===============================
+
+function createMatrix(rows, cols, fill) {
+  const arr = [];
+  for (let i = 0; i < rows; i++) {
+    arr[i] = [];
+    for (let j = 0; j < cols; j++) {
+      arr[i][j] = typeof fill === "number" ? fill : 0;
+    }
+  }
+  return arr;
+}
+
+function cloneMatrix(M) {
+  return M.map(row => [...row]);
+}
+
+function matrixAdd(A, B) {
+  const rows = A.length, cols = A[0].length;
+  const res = createMatrix(rows, cols);
+  for (let i = 0; i < rows; i++)
+    for (let j = 0; j < cols; j++)
+      res[i][j] = A[i][j] + B[i][j];
+  return res;
+}
+
+function matrixSubtract(A, B) {
+  const rows = A.length, cols = A[0].length;
+  const res = createMatrix(rows, cols);
+  for (let i = 0; i < rows; i++)
+    for (let j = 0; j < cols; j++)
+      res[i][j] = A[i][j] - B[i][j];
+  return res;
+}
+
+function matrixMultiply(A, B) {
+  const rows = A.length, cols = B[0].length, inner = A[0].length;
+  const res = createMatrix(rows, cols);
+  for (let i = 0; i < rows; i++)
+    for (let j = 0; j < cols; j++) {
+      let sum = 0;
+      for (let k = 0; k < inner; k++) sum += A[i][k] * B[k][j];
+      res[i][j] = sum;
+    }
+  return res;
+}
+
+function matrixScale(A, s) {
+  const rows = A.length, cols = A[0].length;
+  const res = createMatrix(rows, cols);
+  for (let i = 0; i < rows; i++)
+    for (let j = 0; j < cols; j++)
+      res[i][j] = A[i][j] * s;
+  return res;
+}
+
+function matrixDeterminant(M) {
+  const n = M.length;
+  if (n === 1) return M[0][0];
+  if (n === 2) return M[0][0] * M[1][1] - M[0][1] * M[1][0];
+  let det = 0;
+  for (let j = 0; j < n; j++) {
+    const sub = M.slice(1).map(row => row.filter((_, idx) => idx !== j));
+    det += (j % 2 === 0 ? 1 : -1) * M[0][j] * matrixDeterminant(sub);
+  }
+  return det;
+}
+
+function matrixTranspose(M) {
+  const rows = M.length, cols = M[0].length;
+  const res = createMatrix(cols, rows);
+  for (let i = 0; i < cols; i++)
+    for (let j = 0; j < rows; j++)
+      res[i][j] = M[j][i];
+  return res;
+}
+
+function matrixInverse(M) {
+  const n = M.length;
+  const det = matrixDeterminant(M);
+  if (Math.abs(det) < 1e-12) return null;
+  if (n === 1) return [[1 / M[0][0]]];
+  if (n === 2) {
+    const inv = createMatrix(2, 2);
+    inv[0][0] = M[1][1] / det;
+    inv[0][1] = -M[0][1] / det;
+    inv[1][0] = -M[1][0] / det;
+    inv[1][1] = M[0][0] / det;
+    return inv;
+  }
+  const inv = createMatrix(n, n);
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      const sub = M.filter((_, ri) => ri !== i).map(row => row.filter((_, ci) => ci !== j));
+      const cof = ((i + j) % 2 === 0 ? 1 : -1) * matrixDeterminant(sub);
+      inv[j][i] = cof / det;
+    }
+  }
+  return inv;
+}
+
+function matrixToString(M) {
+  if (!M) return "";
+  return M.map(row => "[" + row.map(v => +v.toFixed(6)).join(", ") + "]").join("\n");
+}
+
+function matrixHTML(M) {
+  if (!M) return "<span class=\"text-muted\">—</span>";
+  let html = "<table class=\"matrix-table\">";
+  for (let i = 0; i < M.length; i++) {
+    html += "<tr>";
+    for (let j = 0; j < M[i].length; j++) {
+      html += "<td>" + (+M[i][j].toFixed(6)) + "</td>";
+    }
+    html += "</tr>";
+  }
+  return html + "</table>";
+}
+
+function readMatrixValues(prefix) {
+  const rows = parseInt(document.getElementById(prefix + "-rows").value, 10);
+  const cols = parseInt(document.getElementById(prefix + "-cols").value, 10);
+  const data = createMatrix(rows, cols);
+  for (let i = 0; i < rows; i++)
+    for (let j = 0; j < cols; j++) {
+      const el = document.getElementById(prefix + "-" + i + "-" + j);
+      data[i][j] = parseFloat(el.value) || 0;
+    }
+  return data;
+}
+
+function buildMatrixInputs(prefix, containerId) {
+  const container = document.getElementById(containerId);
+  const rows = parseInt(document.getElementById(prefix + "-rows").value, 10);
+  const cols = parseInt(document.getElementById(prefix + "-cols").value, 10);
+  let html = "<table class=\"matrix-input-table\">";
+  for (let i = 0; i < rows; i++) {
+    html += "<tr>";
+    for (let j = 0; j < cols; j++) {
+      html += "<td><input type=\"number\" step=\"any\" class=\"form-control form-control-sm matrix-cell\" id=\"" + prefix + "-" + i + "-" + j + "\" value=\"0\"></td>";
+    }
+    html += "</tr>";
+  }
+  html += "</table>";
+  container.innerHTML = html;
+}
+
+function resizeMatrix(prefix) {
+  const callbacks = { A: renderMatrixA, B: renderMatrixB };
+  callbacks[prefix] && callbacks[prefix]();
+}
+
+function renderMatrixA() {
+  buildMatrixInputs("A", "matrix-a-inputs");
+}
+
+function renderMatrixB() {
+  buildMatrixInputs("B", "matrix-b-inputs");
+}
+
+function renderMatrixResult(M) {
+  const el = document.getElementById("matrix-result-display");
+  if (!el) return;
+  if (M === null || M === undefined) {
+    el.innerHTML = "<span class=\"text-danger\">Not invertible (det = 0)</span>";
+    return;
+  }
+  el.innerHTML = matrixHTML(M);
+}
+
+function matrixOperation(op) {
+  const A = readMatrixValues("A");
+  const B = readMatrixValues("B");
+  let result = null;
+  try {
+    switch (op) {
+      case "add": result = matrixAdd(A, B); break;
+      case "sub": result = matrixSubtract(A, B); break;
+      case "mul": result = matrixMultiply(A, B); break;
+      case "detA": result = [[matrixDeterminant(A)]]; break;
+      case "detB": result = [[matrixDeterminant(B)]]; break;
+      case "trA": result = matrixTranspose(A); break;
+      case "trB": result = matrixTranspose(B); break;
+      case "invA": result = matrixInverse(A); break;
+      case "invB": result = matrixInverse(B); break;
+    }
+  } catch (e) {
+    result = null;
+  }
+  renderMatrixResult(result);
+}

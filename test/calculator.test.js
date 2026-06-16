@@ -118,3 +118,63 @@ describe("calculateExpression", () => {
     expect(result).toBe(Math.E);
   });
 });
+
+// Matrix operation tests
+describe("matrix operations", () => {
+  test("matrixAdd adds two matrices", () => {
+    const A = [[1,2],[3,4]];
+    const B = [[5,6],[7,8]];
+    expect(matrixAdd(A, B)).toEqual([[6,8],[10,12]]);
+  });
+
+  test("matrixSubtract subtracts two matrices", () => {
+    const A = [[5,6],[7,8]];
+    const B = [[1,2],[3,4]];
+    expect(matrixSubtract(A, B)).toEqual([[4,4],[4,4]]);
+  });
+
+  test("matrixMultiply multiplies two matrices", () => {
+    const A = [[1,2],[3,4]];
+    const B = [[2,0],[1,2]];
+    expect(matrixMultiply(A, B)).toEqual([[4,4],[10,8]]);
+  });
+
+  test("matrixScale scales a matrix", () => {
+    const A = [[1,2],[3,4]];
+    expect(matrixScale(A, 3)).toEqual([[3,6],[9,12]]);
+  });
+
+  test("matrixDeterminant of 2x2", () => {
+    const A = [[1,2],[3,4]];
+    expect(matrixDeterminant(A)).toBe(-2);
+  });
+
+  test("matrixDeterminant of 3x3", () => {
+    const A = [[6,1,1],[4,-2,5],[2,8,7]];
+    expect(matrixDeterminant(A)).toBe(-306);
+  });
+
+  test("matrixDeterminant of 1x1", () => {
+    expect(matrixDeterminant([[5]])).toBe(5);
+  });
+
+  test("matrixTranspose", () => {
+    const A = [[1,2,3],[4,5,6]];
+    expect(matrixTranspose(A)).toEqual([[1,4],[2,5],[3,6]]);
+  });
+
+  test("matrixInverse of 2x2", () => {
+    const A = [[4,7],[2,6]];
+    const inv = matrixInverse(A);
+    const product = matrixMultiply(A, inv);
+    expect(product[0][0]).toBeCloseTo(1, 10);
+    expect(product[1][1]).toBeCloseTo(1, 10);
+    expect(product[0][1]).toBeCloseTo(0, 10);
+    expect(product[1][0]).toBeCloseTo(0, 10);
+  });
+
+  test("matrixInverse returns null for singular matrix", () => {
+    const A = [[1,2],[2,4]];
+    expect(matrixInverse(A)).toBeNull();
+  });
+});

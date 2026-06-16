@@ -91,6 +91,55 @@
                       <div class="brain-progress"><div class="brain-progress-fill" style="width:0%"></div></div>
                       <div class="brain-calc-count">Calculations: 0</div>
                     </div>
+                    <button class="btn btn-outline-primary w-100 mt-3" onclick="toggleMatrixPanel()">
+                      🧮 Matrix Mode
+                    </button>
+                    <div id="matrix-panel" class="matrix-panel mt-3" style="display:none">
+                      <h6 class="text-center fw-bold mb-3">Matrix Operations</h6>
+                      <div class="row">
+                        <div class="col-6">
+                          <label class="small-label">Matrix A</label>
+                          <div class="d-flex gap-1 mb-2">
+                            <select id="A-rows" class="form-select form-select-sm" onchange="resizeMatrix('A')" style="width:auto">
+                              <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+                            </select>
+                            <span class="mx-1">×</span>
+                            <select id="A-cols" class="form-select form-select-sm" onchange="resizeMatrix('A')" style="width:auto">
+                              <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+                            </select>
+                          </div>
+                          <div id="matrix-a-inputs"></div>
+                        </div>
+                        <div class="col-6">
+                          <label class="small-label">Matrix B</label>
+                          <div class="d-flex gap-1 mb-2">
+                            <select id="B-rows" class="form-select form-select-sm" onchange="resizeMatrix('B')" style="width:auto">
+                              <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+                            </select>
+                            <span class="mx-1">×</span>
+                            <select id="B-cols" class="form-select form-select-sm" onchange="resizeMatrix('B')" style="width:auto">
+                              <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+                            </select>
+                          </div>
+                          <div id="matrix-b-inputs"></div>
+                        </div>
+                      </div>
+                      <div class="d-flex flex-wrap gap-1 justify-content-center mt-3">
+                        <button class="btn btn-sm btn-operator" onclick="matrixOperation('add')">A+B</button>
+                        <button class="btn btn-sm btn-operator" onclick="matrixOperation('sub')">A−B</button>
+                        <button class="btn btn-sm btn-operator" onclick="matrixOperation('mul')">A×B</button>
+                        <button class="btn btn-sm btn-outline-info" onclick="matrixOperation('detA')">det(A)</button>
+                        <button class="btn btn-sm btn-outline-info" onclick="matrixOperation('detB')">det(B)</button>
+                        <button class="btn btn-sm btn-outline-success" onclick="matrixOperation('trA')">Aᵀ</button>
+                        <button class="btn btn-sm btn-outline-success" onclick="matrixOperation('trB')">Bᵀ</button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="matrixOperation('invA')">A⁻¹</button>
+                        <button class="btn btn-sm btn-outline-warning" onclick="matrixOperation('invB')">B⁻¹</button>
+                      </div>
+                      <div class="matrix-result-box mt-3 p-2">
+                        <label class="small-label">Result</label>
+                        <div id="matrix-result-display"><span class="text-muted">—</span></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

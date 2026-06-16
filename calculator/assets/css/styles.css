@@ -909,3 +909,53 @@ body.dark-mode .brain-progress {
 body.dark-mode .brain-calc-count {
   color: #888;
 }
+
+/* ── Matrix Panel ── */
+.matrix-panel {
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(13,110,253,0.15);
+}
+body.dark-mode .matrix-panel {
+  background: rgba(45,45,45,0.9);
+  border-color: rgba(168,85,247,0.3);
+}
+.matrix-input-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.matrix-input-table td {
+  padding: 0;
+}
+.matrix-input-table .matrix-cell {
+  text-align: center;
+  min-width: 56px;
+}
+.matrix-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+.matrix-table td {
+  padding: 6px 12px;
+  border: 1px solid #dee2e6;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+body.dark-mode .matrix-table td {
+  border-color: #555;
+  color: #e0e0e0;
+}
+.matrix-result-box {
+  background: #f8f9fa;
+  border-radius: 12px;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+body.dark-mode .matrix-result-box {
+  background: #333;
+}
